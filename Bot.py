@@ -76,13 +76,15 @@ def command_help(m):
 @bot.message_handler(commands=['dolar'])
 def command_dolar(m):
     cid = m.chat.id
+    string1 = ''
     bot.send_message(cid, "💵 | compra | venta")
     for index, emoji in enumerate(("Oficial", "Blue   ", "Soja", "Liqui  ", "Bolsa  ", "Bitcoin", "Turista")):
-        if(index!=2): #do not throw away the dollar price of soy
+        if(index!=2): #no tirar precio dolar soja
             compra = json[index]['casa']['compra'][:-1]
             venta = json[index]['casa']['venta'][:-1]
-            print(f" {emoji} |  {compra} | {venta}")
-            bot.send_message(cid, f" {emoji} |  {compra} | {venta}")
+            string = emoji + '  | ' + compra + '  | ' + venta + '\n'
+            string1 = string1 + string
+    bot.send_message(cid, string1)
 
 # command ping
 @bot.message_handler(commands=['ping'])
