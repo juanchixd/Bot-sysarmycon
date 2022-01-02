@@ -18,9 +18,6 @@ global cont
 cont = 0
 TOKEN = 'INSERT TOKEN'
 
-knownUsers = []  # todo: save these in a file,
-userStep = {}  # so they won't reset every time the bot restarts
-
 commands = {  # command description used in the "help" command
     'start'       : 'Para empezar a usar el bot',
     'help'        : 'Obtener informacion de los comandos disponibles',
@@ -28,54 +25,19 @@ commands = {  # command description used in the "help" command
     'ping'        : '!ping',
     'pong'        : '!ping',
     'adminbirras' : 'Adminbirras',
+    'btc'         : 'Binance, bitcoin',
+    'dns'         : 'Era-el-dns.png',
 }
 
-hideBoard = types.ReplyKeyboardRemove()  # if sent as reply_markup, will hide the keyboard
-
-
-# error handling if user isn't known yet
-# (obsolete once known users are saved to file, because all users
-#   had to use the /start command and are therefore known to the bot)
-def get_user_step(uid):
-    if uid in userStep:
-        return userStep[uid]
-    else:
-        knownUsers.append(uid)
-        userStep[uid] = 0
-        print("Nuevo usuario detectado, debe usar \"/start\" para empezar")
-        return 0
-
-
-# only used for console output now
-def listener(messages):
-    """
-    When new messages arrive TeleBot will call this function.
-    """
-    for m in messages:
-        if m.content_type == 'text':
-            # print the sent message to the console
-            print(str(m.chat.first_name) + " [" + str(m.chat.id) + "]: " + m.text)
-
-
 bot = telebot.TeleBot(TOKEN)
-bot.set_update_listener(listener)  # register listener
 
 
-# handle the "/start" command
 @bot.message_handler(commands=['start'])
 def command_start(m):
     cid = m.chat.id
-    if cid not in knownUsers:  # if user hasn't used the "/start" command yet:
-        knownUsers.append(cid)  # save user id, so you could brodcast messages to all users of this bot later
-        userStep[cid] = 0  # save user id and his current "command level", so he can use the "/getImage" command
-        bot.send_message(cid, "Hola extraño, te voy a escanear...")
-        bot.send_message(cid, "Escaneo completo, ahora te conozco")
-        command_help(m)  # show the new user the help page
-    else:
-        bot.send_message(cid, "Ya te conozco, no es necesario que te escanee devuelta")
+    bot.send_message(cid, "Hola, este es el bot de la comunidad de SYSARMY Concordia")
+    command_help(m)  # show the new user the help page
 
-
-# help page
 @bot.message_handler(commands=['help'])
 def command_help(m):
     cid = m.chat.id
@@ -85,14 +47,13 @@ def command_help(m):
         help_text += commands[key] + "\n"
     bot.send_message(cid, help_text)  # send the generated help page
 
-# command dolar
 @bot.message_handler(commands=['dolar', 'dólar', 'dolor'])
 def dolar(m):
     global cont
     cid = m.chat.id
     a = telebot.util.extract_arguments(m.text)
     json = requests.get(URL_DOLAR).json()
-    string1 = ''
+    string1 = "💵 | compra | venta" + "\n"
     shampoo = False
     c = 0
     if len(a) != 0 and any(map(str.isdigit, a)) != True and a.find('e') != -1 or a.find('E') != -1:
@@ -122,13 +83,11 @@ def dolar(m):
             if c == 1:
                 bot.send_message(cid, "Sera que iba a tener plata")
             else:
-                bot.send_message(cid, "💵 | compra | venta")
                 bot.send_message(cid, string1)
         else:
             shampoo = True
             cont = cont + 1
     elif len(a) == 0 or a == 1:
-        bot.send_message(cid, "💵 | compra | venta")
         for index, emoji in enumerate(("Oficial", "Blue   ", "Soja", "Liqui  ", "Bolsa  ", "Bitcoin", "Solidario")):
             if(index!=2 and index != 5):
                 compra = json[index]['casa']['compra'][:-1]
@@ -148,23 +107,88 @@ def dolar(m):
     else:
         None
 
-# command ping
+@bot.message_handler(commands=['btc', 'bitcoin', 'bit'])
+def bit(m):
+    global cont
+    cid = m.chat.id
+    a = telebot.util.extract_arguments(m.text)
+    json = requests.get('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT').json()
+    string1 = "💰 | 💲(USD)" + "\n" + "Binance "
+    shampoo = False
+    c = 0
+    if len(a) != 0 and any(map(str.isdigit, a)) != True and a.find('e') != -1 or a.find('E') != -1:
+        cont = cont + 1
+        shampoo = True
+    elif len(a) != 0:
+        a = a.replace(",", ".")
+        if check_float(a) == True:
+            b = float(a)
+            string1 = string1 + str(float(json['price']) * b)
+            precio = float(json['price']) * b
+            if math.isinf(precio) == True:
+                c = 1
+            if c == 1:
+                bot.send_message(cid, "Sera que iba a tener plata")
+            else:
+                bot.send_message(cid, string1)
+        else:
+            shampoo = True
+            cont = cont + 1
+    elif len(a) == 0 or a == 1:
+        string1 = string1 + str(float(json['price']))
+        bot.send_message(cid, string1)
+    else:
+        shampoo = True
+        cont = cont + 1
+    if cont == 5:
+        bot.send_message(cid, "Se acabo el shampoo, deja de ser tan pelotudo")
+        cont = 0
+    elif shampoo == True:
+        bot.send_message(cid, "Por gente como vos, el Shampoo trae instrucciones")
+    else:
+        None
+
+#command ping
 @bot.message_handler(commands=['ping'])
 def command_ping(m):
     cid = m.chat.id
     bot.send_message(cid, "/pong")
 
-# command pong
+#command pong
 @bot.message_handler(commands=['pong'])
 def command_ping(m):
     cid = m.chat.id
     bot.send_message(cid, "/ping")
 
-# command adminbeer
+#command setadminbeer
+@bot.message_handler(commands=['setbeer'])
+def set_beer(m):
+    cid = m.chat.id
+    arg = telebot.util.extract_arguments(m.text)
+    if len(arg) == 0:
+        bot.send_message(cid, 'Junto al comando escribi separado por comas "FECHA, HORA, LUGAR"')
+    elif len(arg) != 0 and arg.count(',') == 2:
+        corte = arg.split(',')
+        corte = [s.strip() for s in corte]
+        f = open('beer.txt', 'w')
+        f.write(arg)
+        f.close()
+        bot.send_message(cid, "ANOTADO\nVamos por unas birras? Fecha: %s %s\nLugar: %s\nSe prenden?\nEl que no va se lo pierde\nVamos a repartir calcos 👀👀" %(corte[0], corte[1], corte[2]))
+    elif arg.count(',') > 2:
+        bot.send_message(cid, "Te dije solo 3 argumentos con comas entre medio")
+    else:
+        None
+
+#command adminbeer
 @bot.message_handler(commands=['adminbirras'])
 def command_adminbirras(m):
+    f = open('beer.txt','r')
     cid = m.chat.id
-    bot.send_message(cid, "Vamos por unas birras? Definamos fecha 👀""\n""El que no va se lo pierde""\n""Vamos a repartir calcos 👀👀")
+    arg = f.read()
+    f.close()
+    corte = arg.split(',')
+    corte = [s.strip() for s in corte]
+    bot.send_message(cid, "Vamos por unas birras? Fecha: %s %s\nLugar: %s\nSe prenden?\nEl que no va se lo pierde\nVamos a repartir calcos 👀👀" %(corte[0], corte[1], corte[2]))
 
 @bot.message_handler(commands=['hola'])
 def command_hola(m):
@@ -176,20 +200,21 @@ def command_bomb(m):
     cid = m.chat.id
     bot.send_message(cid, "Dale, escribi :(){ :|:& };:  en la terminal si tenes huevos 👀")
 
+#Command era-el-dns.png
 @bot.message_handler(commands=['dns'])
 def command_dns(m):
     cid = m.chat.id
     p = open('dns.png', 'rb')
     bot.send_photo(cid, p)
 
-#Comando uptime
+#Command uptime
 @bot.message_handler(commands=['uptime'])
 def uptim(m):
     cid = m.chat.id
     uptime = subprocess.getoutput('uptime -p')
     bot.send_message(cid, "Uptime: {}".format(uptime));
 
-#Comando temperatura
+#Command temperatura
 @bot.message_handler(commands=['temperatura'])
 def temperatura(m):
     cid = m.chat.id
@@ -200,6 +225,17 @@ def temperatura(m):
 @bot.message_handler(func=lambda message: message.text == "Hola!")
 def command_text_hi(m):
     bot.send_message(m.chat.id, "I love you!")
+
+#command search
+@bot.message_handler(commands=['search'])
+def google(m):
+    cid = m.chat.id
+    a = telebot.util.extract_arguments(m.text)
+    string = 'https://letmegooglethat.com/?q=' + a
+    string = string.replace(" ", "+")
+    bot.send_message(cid, str(string) + " Era muy complicado? Sound: Probaste googleando - Nerdearla")
+    audio = open('/home/pi/BOTS/google.mp3', 'rb')
+    bot.send_audio(cid, audio)
 
 def check_float(a):
     try:
