@@ -41,8 +41,11 @@ python3 -m pip install --upgrade Pillow
 ```
 
 >Luego creamos un bot con BotFather y nos guardamos el token que nos genera
+
 >Conseguir un token para la api de [Open Weather Map][weather] y la guardamos
+
 >Copiamos este repositorio y lo pegamos en donde querramos
+
 >Creamos un archivo .env dentro de la misma carpeta donde tengamos nuestro archivo .py que contenga lo siguiente:
 
 ```sh
@@ -75,7 +78,7 @@ Y listo, tendriamos andando nuestro bot, solo faltaria meterlo en crontab o syst
 | Telegram Core API | [Bot Api][telegram] |
 | Mi telegram | [Contact][contactTG] |
 | Python | [Official][py] |
-
+| Web | [My web][web] |
 
 [//]: # 
    [weather]: <https://openweathermap.org/>
@@ -84,3 +87,4 @@ Y listo, tendriamos andando nuestro bot, solo faltaria meterlo en crontab o syst
    [pyapi]: <https://github.com/eternnoir/pyTelegramBotAPI>
    [telegram]: <https://core.telegram.org/bots/api>
    [contactTG]: <https://t.me/Juanbgon>
+   [web]: <https://juangonzalez.com.ar>
