@@ -200,12 +200,12 @@ def set_beer(m):
     elif len(arg) != 0 and arg.count(',') == 2:
         corte = arg.split(',')
         corte = [s.strip() for s in corte]
-        f = open('/home/bots-backup/txt/beer.txt', 'w')
+        f = open('txt/beer.txt', 'w')
         f.write(arg)
         f.close()
         fecha = corte[0] + ' ' + corte[1]
         lugar = corte[2]
-        image = Image.open('/home/bots-backup/img/plantilla.png')
+        image = Image.open('img/plantilla.png')
         draw = ImageDraw.Draw(image)
         font = ImageFont.truetype("/usr/share/fonts/truetype/ttf-dejavu/DejaVuSerif.ttf", 35)
         if len(lugar) > 30:
@@ -218,8 +218,8 @@ El que no va se lo pierde
 Vamos a repartir calcos
 nerd@Concordia:~/SysArmyCon$ apt-get install Beer""" % (fecha, lugar)
         draw.multiline_text((50, 150), text, font=font, fill="white")
-        image.save('/home/bots-backup/img/beer.png')
-        bot.send_photo(cid, open('/home/bots-backup/img/beer.png', 'rb'))
+        image.save('img/beer.png')
+        bot.send_photo(cid, open('img/beer.png', 'rb'))
         bot.send_message(cid, "ANOTADO\nVamos por unas birras? Fecha: %s %s\nLugar: %s\nSe prenden?\nEl que no va se lo pierde\nVamos a repartir calcos 👀👀" %(corte[0], corte[1], corte[2]))
         bot.send_poll(cid, "Se prenden?", ['Si', 'No'], is_anonymous=False)
     elif arg.count(',') > 2:
@@ -232,19 +232,19 @@ nerd@Concordia:~/SysArmyCon$ apt-get install Beer""" % (fecha, lugar)
 #command adminbeer
 @bot.message_handler(commands=['adminbirras'])
 def command_adminbirras(m):
-    f = open('/home/bots-backup/txt/beer.txt','r')
+    f = open('txt/beer.txt','r')
     cid = m.chat.id
     arg = f.read()
     f.close()
     corte = arg.split(',')
     corte = [s.strip() for s in corte]
     bot.send_message(cid, "Vamos por unas birras? Fecha: %s %s\nLugar: %s\nSe prenden?\nEl que no va se lo pierde\nVamos a repartir calcos 👀👀" %(corte[0], corte[1], corte[2]))
-    bot.send_photo(cid, open('/home/bots-backup/img/beer.png', 'rb'))
+    bot.send_photo(cid, open('img/beer.png', 'rb'))
 
 #command recordatorio
 @bot.message_handler(commands=['recordatorio'])
 def recordatorio(m):
-    f = open('/home/bots-backup/txt/beer.txt','r')
+    f = open('txt/beer.txt','r')
     arg = f.read()
     f.close()
     corte = arg.split(',')
@@ -267,7 +267,7 @@ def command_bomb(m):
 @bot.message_handler(commands=['dns'])
 def command_dns(m):
     cid = m.chat.id
-    p = open('/home/bots-backup/img/dns.png', 'rb')
+    p = open('img/dns.png', 'rb')
     bot.send_photo(cid, p)
 
 #command uptime
@@ -290,7 +290,7 @@ def google(m):
     string = 'https://letmegooglethat.com/?q=' + a
     string = string.replace(" ", "+")
     bot.send_message(cid, str(string) + " Era muy complicado? Sound: Probaste googleando - Nerdearla")
-    audio = open('/home/bots-backup/google.mp3', 'rb')
+    audio = open('google.mp3', 'rb')
     bot.send_audio(cid, audio)
 
 def check_float(a):
