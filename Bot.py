@@ -267,7 +267,7 @@ def command_bomb(m):
 @bot.message_handler(commands=['dns'])
 def command_dns(m):
     cid = m.chat.id
-    p = open('/home/bots-backup/dns.png', 'rb')
+    p = open('/home/bots-backup/img/dns.png', 'rb')
     bot.send_photo(cid, p)
 
 #command uptime
